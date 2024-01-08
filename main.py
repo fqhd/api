@@ -22,7 +22,7 @@ def request_page():
 
 	data_set = {
 		'Page': 'Request',
-		'Message': f'Sucessfully loaded the request for {user_query}',
+		'Message': f'Sucessfully loaded osmething because im the goat and i know everything {user_query}',
 		'Timestamp': time.time()
 	}
 
