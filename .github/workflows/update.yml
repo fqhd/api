@@ -1,0 +1,27 @@
+name: Reload Server
+
+on:
+  push:
+    branches: [master, main]
+
+env:
+  USER: fahd
+  HOST: "95.111.236.61"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Setup SSH Key
+        run: |
+          apt-get -yq update && apt-get -yqq install ssh
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -t rsa ${{ env.HOST }} >> ~/.ssh/known_hosts
+      - name: Connect & Deploy
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ env.USER }}@${{ env.HOST }} << "ENDSSH"
+          screen -S API -X stuff "^C"
+          ENDSSH
