@@ -16,24 +16,8 @@ def home_page():
 
 	return json_dump
 
-@app.route('/asciify', methods=['GET'])
-def request_page():
-	img_url = str(request.args.get('img_url'))
-	width = str(request.args.get('width'))
-
-	if width > 1000:
-		abort(410, 'Bad Request: Maximum width allowed is 1000')
-
-	image = load_image_from_url(img_url)
-	if image == None:
-		abort(400, 'Bad Request: Invalid URL')
-	
-	ascii_image_text = asciify(image, width)
-
-	return ascii_image_text
-
-@app.route('/deepdream', methods=['GET'])
-def request_page():
+@app.route('/asciify/', methods=['GET'])
+def request_asciify():
 	img_url = str(request.args.get('img_url'))
 	width = str(request.args.get('width'))
 
