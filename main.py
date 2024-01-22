@@ -1,7 +1,8 @@
 from flask import *
 import time, json
-from asciify import asciify
+from asciify import asciify, draw_ascii_art
 from utils import load_image_from_url
+from io import BytesIO
 
 app = Flask(__name__)
 
@@ -43,3 +44,36 @@ def request_asciify():
 	ascii_image_text = asciify(image, width)
 
 	return ascii_image_text
+
+@app.route('/draw_ascii', methods=['GET'])
+def request_draw_ascii():
+	text = request.headers.get('text')
+	font_size = request.headers.get('fontsize')
+
+	if text == None:
+		abort(400, 'Bad Request: text not specified')
+
+	if font_size == None:
+		abort(400, 'Bad Request: font_size not specified')
+
+	try:
+		font_size = int(font_size)
+	except:
+		abort(400, 'Bad Request: font_size must be a number')
+
+	if font_size > 32:
+		abort(400, 'Bad Request: maximum font_size allowed is 32')
+	
+	image = draw_ascii_art(text, font_size)
+	if image == -1:
+		abort(400, 'Error: output image dimensions are too large, try reducing font_size or text length')
+
+	if image.size[0] == 0 or image.size[1] == 0:
+		abort(400, 'Error: one of the image dimensions is 0')
+	#TODO: Figure out why sometimes the image dimensions are 0
+
+	img_bytes = BytesIO()
+	image.save(img_bytes, format='JPEG')
+	img_bytes.seek(0)
+
+	return send_file(img_bytes, mimetype='image/jpeg')

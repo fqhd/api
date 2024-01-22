@@ -10,9 +10,6 @@ def draw_ascii_art(ascii_text, font_size):
 	width = int(font.getlength(ascii_text.split('\n')[0]))
 	height = int(font_size * len(ascii_text.split('\n')) - font_size)
 
-	print(width)
-	print(height)
-
 	if width >= 2000:
 		return -1
 	if height >= 2000:
