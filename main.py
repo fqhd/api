@@ -7,7 +7,7 @@ from io import BytesIO
 import subprocess
 
 app = Flask(__name__)
-CORS(app, origins='http://localhost:9000')
+CORS(app, origins='https://fqhd.github.io/WebChess')
 
 @app.route('/', methods=['GET'])
 def home_page():
