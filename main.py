@@ -4,6 +4,7 @@ import time, json
 from asciify import asciify, draw_ascii_art
 from utils import load_image_from_url
 from io import BytesIO
+import subprocess
 
 app = Flask(__name__)
 CORS(app, origins='http://localhost:9000')
@@ -80,6 +81,14 @@ def request_draw_ascii():
 
 	return send_file(img_bytes, mimetype='image/jpeg')
 
+import os
 @app.route('/chessbot', methods=['GET'])
 def chess_bot():
-	return 'hello'
+	fen = request.headers.get('fen')
+	depth = request.headers.get('depth')
+
+	process = subprocess.Popen([f'ChessBot', fen, depth], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+	output, error = process.communicate()
+
+	return output
