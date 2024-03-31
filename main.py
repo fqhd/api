@@ -1,10 +1,12 @@
 from flask import *
+from flask_cors import CORS
 import time, json
 from asciify import asciify, draw_ascii_art
 from utils import load_image_from_url
 from io import BytesIO
 
 app = Flask(__name__)
+CORS(app, origins='http://localhost:9000')
 
 @app.route('/', methods=['GET'])
 def home_page():
@@ -77,3 +79,7 @@ def request_draw_ascii():
 	img_bytes.seek(0)
 
 	return send_file(img_bytes, mimetype='image/jpeg')
+
+@app.route('/chessbot', methods=['GET'])
+def chess_bot():
+	return 'hello'
