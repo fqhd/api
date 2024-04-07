@@ -1,3 +1,4 @@
+import chess.polyglot
 from flask import *
 from flask_cors import CORS
 import time, json
@@ -5,6 +6,12 @@ from asciify import asciify, draw_ascii_art
 from utils import load_image_from_url
 from io import BytesIO
 import subprocess
+import chess
+import pickle
+import random
+
+with open('opening_book.bin', 'rb') as f:
+	book = pickle.load(f)
 
 app = Flask(__name__)
 CORS(app, origins='https://fqhd.github.io/WebChess')
@@ -86,6 +93,11 @@ import os
 def chess_bot():
 	fen = request.headers.get('fen')
 	depth = request.headers.get('depth')
+
+	board = chess.Board(fen)
+	hsh = chess.polyglot.zobrist_hash(board)
+	if hsh in book:
+		return random.choice(book[hsh])
 
 	process = subprocess.Popen([f'ChessBot', fen, depth], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
