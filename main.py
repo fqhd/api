@@ -14,7 +14,7 @@ with open('opening_book.bin', 'rb') as f:
 	book = pickle.load(f)
 
 app = Flask(__name__)
-CORS(app, origins='https://fqhd.github.io/WebChess')
+CORS(app)
 
 @app.route('/', methods=['GET'])
 def home_page():
@@ -99,7 +99,7 @@ def chess_bot():
 	if hsh in book:
 		return random.choice(book[hsh])
 
-	process = subprocess.Popen([f'ChessBot', fen, depth], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	process = subprocess.Popen([f'./ChessBot', fen, depth], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 	output, error = process.communicate()
 
