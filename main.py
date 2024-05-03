@@ -9,6 +9,13 @@ import subprocess
 import chess
 import pickle
 import random
+import torch
+import game
+from network import TinyNet
+
+net = TinyNet()
+net.load_state_dict(torch.load('net.pth'))
+net.eval()
 
 with open('opening_book.bin', 'rb') as f:
 	book = pickle.load(f)
@@ -88,7 +95,6 @@ def request_draw_ascii():
 
 	return send_file(img_bytes, mimetype='image/jpeg')
 
-import os
 @app.route('/chessbot', methods=['GET'])
 def chess_bot():
 	fen = request.headers.get('fen')
@@ -104,3 +110,15 @@ def chess_bot():
 	output, error = process.communicate()
 
 	return output
+
+@app.route('/canwin', methods=['GET'])
+def canwin():
+	state = request.headers.get('state')
+	state = json.loads(state)
+	state = game.parse_state(state)
+	state = torch.tensor(state, dtype=torch.float32)
+	with torch.no_grad():
+		pred = net(state)
+	pred = torch.sigmoid(pred)
+	pred = pred.item()
+	return str(pred)
